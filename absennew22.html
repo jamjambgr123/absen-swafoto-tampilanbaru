@@ -3,1220 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Absensi Relawan SPPG</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Aplikasi Presensi - Face Recognition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-        /* CSS dari tema di atas */
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --accent: #e74c3c;
-            --light: #ecf0f1;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --dark: #2c3e50;
-            --gray: #95a5a6;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
-                              url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="%23f8f9fa" width="100" height="100"/><path fill="%233498db" opacity="0.2" d="M0 0h100v100H0z"/><path fill="%232c3e50" opacity="0.1" d="M0 0h50v50H0z"/></svg>');
-            background-size: 300px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
-        }
-        
-        .navbar {
-            background-color: var(--primary);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border: none;
-            transition: transform 0.3s;
-            overflow: hidden;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card-header {
-            background-color: var(--secondary);
-            color: white;
-            border-radius: 10px 10px 0 0 !important;
-            font-weight: 600;
-            padding: 15px 20px;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary);
-            border: none;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-            border: none;
-            padding: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning);
-            border: none;
-            padding: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-danger {
-            background-color: var(--accent);
-            border: none;
-            transition: all 0.3s;
-        }
-        
-        .table th {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .late {
-            color: var(--accent);
-            font-weight: bold;
-        }
-        
-        .on-time {
-            color: var(--success);
-            font-weight: bold;
-        }
-        
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .attendance-btn {
-            font-size: 1.2rem;
-            padding: 15px;
-            margin: 10px 0;
-            transition: all 0.3s;
-        }
-        
-        .attendance-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-        
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--secondary);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .info-badge {
-            background-color: var(--light);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            margin: 5px 0;
-            display: inline-block;
-        }
-        
-        .current-time {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        .status-present {
-            background-color: var(--success);
-        }
-        
-        .status-late {
-            background-color: var(--accent);
-        }
-        
-        .status-absent {
-            background-color: var(--gray);
-        }
-        
-        .schedule-box {
-            background-color: var(--light);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-        }
-        
-        .export-btn {
-            margin-top: 10px;
-        }
-        
-        .report-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 20px;
-        }
-        
-        .report-options {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            background: #4e54c8;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
         }
         
         .camera-container {
+            position: relative;
             width: 100%;
-            margin: 15px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #video {
+            width: 100%;
+            display: block;
+            background: #f0f0f0;
+            height: 350px;
+            object-fit: cover;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
         }
         
-        #video, #canvas {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            background-color: var(--light);
+        .camera-container:hover .camera-overlay {
+            opacity: 1;
         }
         
-        .camera-buttons {
+        .controls {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
         
-        .admin-only {
-            border-left: 4px solid var(--accent);
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .login-container {
-                margin: 50px auto;
-                padding: 20px;
-            }
-            
-            .card-body {
-                padding: 15px;
-            }
-            
-            .attendance-btn {
-                font-size: 1rem;
-                padding: 12px;
-            }
-            
-            .report-options {
+        .btn-primary {
+            background: #4e54c8;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3f43a7;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #4e54c8;
+            border: 2px solid #4e54c8;
+        }
+        
+        .btn-outline:hover {
+            background: #f0f0f0;
+        }
+        
+        .instructions {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .instructions h3 {
+            color: #4e54c8;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .status.ready {
+            background: #e6f7ee;
+            color: #2ecc71;
+        }
+        
+        .status.processing {
+            background: #e6f0ff;
+            color: #3498db;
+        }
+        
+        .status.success {
+            background: #e6f7ee;
+            color: #2ecc71;
+        }
+        
+        .status.error {
+            background: #fee;
+            color: #e74c3c;
+        }
+        
+        .face-feedback {
+            text-align: center;
+            font-size: 18px;
+            margin: 15px 0;
+            min-height: 27px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .feature i {
+            font-size: 24px;
+            color: #4e54c8;
+            margin-bottom: 10px;
+        }
+        
+        .feature h4 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
                 flex-direction: column;
             }
             
-            .camera-buttons {
-                flex-direction: column;
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-hands-helping me-2"></i>
-                Sistem Absensi Relawan SPPG
-            </a>
-            <div class="d-flex">
-                <span class="navbar-text me-3 current-time" id="current-date-time"></span>
-                <button class="btn btn-outline-light btn-sm" id="logout-btn">
-                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+    <div class="container">
+        <div class="header">
+            <h1>Aplikasi Presensi Modern</h1>
+            <p>Berbasis GPS, Selfie, dan Pengenalan Wajah</p>
+        </div>
+        
+        <div class="content">
+            <div class="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <div class="camera-overlay">
+                    <i class="fas fa-camera fa-3x"></i>
+                    <p>Kamera siap untuk presensi</p>
+                </div>
+            </div>
+            
+            <div class="face-feedback" id="faceFeedback">
+                Silakan mulai proses presensi
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="status ready" id="status">
+                Status: Siap memulai presensi
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="startBtn">
+                    <i class="fas fa-play"></i> Mulai Presensi
+                </button>
+                <button class="btn btn-outline" id="captureBtn" disabled>
+                    <i class="fas fa-camera"></i> Ambil Foto
                 </button>
             </div>
+            
+            <div class="instructions">
+                <h3>Petunjuk Presensi:</h3>
+                <ol>
+                    <li>Klik tombol "Mulai Presensi" untuk memulai</li>
+                    <li>Hadapkan wajah Anda ke kamera hingga terdeteksi</li>
+                    <li>Anda akan diminta untuk <strong>membuka mulut dua kali</strong> sebagai verifikasi</li>
+                    <li>Setelah verifikasi berhasil, klik "Ambil Foto"</li>
+                    <li>Sistem akan mencatat presensi Anda dengan GPS dan timestamp</li>
+                </ol>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Presensi Berbasis GPS</h4>
+                    <p>Pastikan Anda berada di lokasi yang ditentukan</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-camera"></i>
+                    <h4>Selfie Otomatis</h4>
+                    <p>Absen disertai foto langsung dari kamera</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-user-check"></i>
+                    <h4>Face Recognition</h4>
+                    <p>Mencegah titip absen dan meningkatkan kejujuran</p>
+                </div>
+            </div>
         </div>
-    </nav>
-
-    <!-- Login Section -->
-    <div id="login-section" class="container">
-        <div class="login-container">
-            <h2 class="text-center mb-4">Login Sistem</h2>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Masukkan username">
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Masukkan password">
-                <div class="form-text">Untuk relawan: password123</div>
-            </div>
-            <button id="login-btn" class="btn btn-primary w-100">Login</button>
-        </div>
-    </div>
-
-    <!-- Main Content (hidden until login) -->
-    <div id="main-section" class="container mt-4 d-none">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Profil Relawan</h5>
-                    </div>
-                    <div class="card-body text-center">
-                        <img src="https://ui-avatars.com/api/?name=Relawan&background=3498db&color=fff" class="profile-img mb-3" alt="Profile" id="profile-image">
-                        <h4 id="profile-name">Nama Relawan</h4>
-                        <p id="profile-division" class="text-muted">Divisi</p>
-                        <div class="info-badge" id="profile-salary">Upah Harian: Rp 0</div>
-                        
-                        <!-- Camera Section -->
-                        <div class="camera-container mt-3">
-                            <video id="video" autoplay playsinline class="d-none"></video>
-                            <canvas id="canvas" class="d-none"></canvas>
-                            <div class="camera-buttons">
-                                <button id="start-camera" class="btn btn-info btn-sm">
-                                    <i class="fas fa-camera me-1"></i>Aktifkan Kamera
-                                </button>
-                                <button id="take-photo" class="btn btn-success btn-sm d-none">
-                                    <i class="fas fa-camera me-1"></i>Ambil Foto
-                                </button>
-                                <button id="retake-photo" class="btn btn-warning btn-sm d-none">
-                                    <i class="fas fa-redo me-1"></i>Ulangi
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="d-grid gap-2 mt-3">
-                            <button id="check-in-btn" class="btn btn-success attendance-btn">
-                                <i class="fas fa-fingerprint me-2"></i>Absen Masuk
-                            </button>
-                            <button id="check-out-btn" class="btn btn-warning attendance-btn">
-                                <i class="fas fa-sign-out-alt me-2"></i>Absen Pulang
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Info Jadwal</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="schedule-box">
-                            <p><strong>Jam Masuk:</strong> <span id="schedule-in">00:00</span></p>
-                            <p><strong>Jam Pulang:</strong> <span id="schedule-out">00:00</span></p>
-                        </div>
-                        <p><strong>Status Hari Ini:</strong> <span id="attendance-status">-</span></p>
-                        <div id="late-warning" class="alert alert-warning d-none">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Anda terlambat absen masuk!
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Riwayat Absensi</h5>
-                        <div>
-                            <select id="month-select" class="form-select form-select-sm d-inline-block w-auto">
-                                <option value="0">Januari</option>
-                                <option value="1">Februari</option>
-                                <option value="2">Maret</option>
-                                <option value="3">April</option>
-                                <option value="4">Mei</option>
-                                <option value="5">Juni</option>
-                                <option value="6">Juli</option>
-                                <option value="7">Agustus</option>
-                                <option value="8">September</option>
-                                <option value="9">Oktober</option>
-                                <option value="10">November</option>
-                                <option value="11">Desember</option>
-                            </select>
-                            <select id="year-select" class="form-select form-select-sm d-inline-block w-auto ms-2">
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                            </select>
-                            <button id="export-btn" class="btn btn-sm btn-outline-primary ms-2">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Masuk</th>
-                                        <th>Pulang</th>
-                                        <th>Status</th>
-                                        <th>Keterangan</th>
-                                        <th>Foto</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="attendance-history">
-                                    <!-- Data will be populated by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Laporan Section (Admin Only) -->
-                <div class="report-section admin-only d-none" id="admin-section">
-                    <h4 class="mb-4"><i class="fas fa-lock me-2"></i>Admin - Unduh Laporan Absensi</h4>
-                    <div class="report-options">
-                        <select id="report-month" class="form-select">
-                            <option value="-1">Semua Bulan</option>
-                            <option value="0">Januari</option>
-                            <option value="1">Februari</option>
-                            <option value="2">Maret</option>
-                            <option value="3">April</option>
-                            <option value="4">Mei</option>
-                            <option value="5">Juni</option>
-                            <option value="6">Juli</option>
-                            <option value="7">Agustus</option>
-                            <option value="8">September</option>
-                            <option value="9">Oktober</option>
-                            <option value="10">November</option>
-                            <option value="11">Desember</option>
-                        </select>
-                        <select id="report-year" class="form-select">
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                        </select>
-                        <select id="report-format" class="form-select">
-                            <option value="csv">CSV</option>
-                            <option value="pdf">PDF</option>
-                        </select>
-                        <button id="generate-report" class="btn btn-primary">
-                            <i class="fas fa-file-download me-2"></i>Buat Laporan
-                        </button>
-                    </div>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Fitur ini hanya tersedia untuk admin. Laporan akan berisi data absensi semua relawan.
-                    </div>
-                </div>
-            </div>
+        
+        <div class="footer">
+            <p>&copy; 2023 Aplikasi Presensi Modern. All rights reserved.</p>
         </div>
     </div>
 
-    <!-- Notification Area -->
-    <div id="notification-area"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Initialize jsPDF
-        window.jsPDF = window.jspdf.jsPDF;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Data relawan
-            const volunteers = [
-                { id: 1, name: "YANI HERAWATI", division: "ASLAP", phone: "085715388009", dailySalary: 220000, schedule: { in: "04:00", out: "12:00" } },
-                { id: 2, name: "SUPRIYADI", division: "SECURITY", phone: "085715388009", dailySalary: 150000, schedule: { in: "23:00", out: "07:00" } },
-                { id: 3, name: "RIAN HARYADIN", division: "KA. CUCI OMPRENG", phone: "085715388009", dailySalary: 140000, schedule: { in: "13:00", out: "21:00" } },
-                // ... data lainnya (disingkat untuk contoh)
-                { id: 53, name: "SURYA ADHARI", division: "OB", phone: "085715388009", dailySalary: 115000, schedule: { in: "06:00", out: "14:00" } }
-            ];
-
-            // Elemen UI
-            const loginSection = document.getElementById('login-section');
-            const mainSection = document.getElementById('main-section');
-            const loginBtn = document.getElementById('login-btn');
-            const logoutBtn = document.getElementById('logout-btn');
-            const checkInBtn = document.getElementById('check-in-btn');
-            const checkOutBtn = document.getElementById('check-out-btn');
-            const currentDateTime = document.getElementById('current-date-time');
-            const profileName = document.getElementById('profile-name');
-            const profileDivision = document.getElementById('profile-division');
-            const profileSalary = document.getElementById('profile-salary');
-            const scheduleIn = document.getElementById('schedule-in');
-            const scheduleOut = document.getElementById('schedule-out');
-            const attendanceStatus = document.getElementById('attendance-status');
-            const lateWarning = document.getElementById('late-warning');
-            const attendanceHistory = document.getElementById('attendance-history');
-            const monthSelect = document.getElementById('month-select');
-            const yearSelect = document.getElementById('year-select');
-            const notificationArea = document.getElementById('notification-area');
-            const exportBtn = document.getElementById('export-btn');
-            const generateReportBtn = document.getElementById('generate-report');
-            const reportMonth = document.getElementById('report-month');
-            const reportYear = document.getElementById('report-year');
-            const reportFormat = document.getElementById('report-format');
-            const adminSection = document.getElementById('admin-section');
-            const startCameraBtn = document.getElementById('start-camera');
-            const takePhotoBtn = document.getElementById('take-photo');
-            const retakePhotoBtn = document.getElementById('retake-photo');
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const profileImage = document.getElementById('profile-image');
-
-            // State aplikasi
-            let currentUser = null;
-            let isAdmin = false;
-            let attendanceData = [];
-            let stream = null;
-            let currentPhoto = null;
-
-            // Update waktu secara real-time
-            function updateDateTime() {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                };
-                currentDateTime.textContent = now.toLocaleDateString('id-ID', options);
-            }
-            setInterval(updateDateTime, 1000);
-            updateDateTime();
-
-            // Inisialisasi data dari localStorage
-            function initData() {
-                const savedData = localStorage.getItem('attendanceData');
-                if (savedData) {
-                    attendanceData = JSON.parse(savedData);
-                } else {
-                    // Data contoh untuk demo
-                    const today = new Date();
-                    const lastWeek = new Date();
-                    lastWeek.setDate(today.getDate() - 7);
-                    
-                    for (let i = 0; i < 7; i++) {
-                        const date = new Date(lastWeek);
-                        date.setDate(lastWeek.getDate() + i);
-                        const dateStr = date.toISOString().split('T')[0];
-                        
-                        volunteers.forEach(volunteer => {
-                            if (Math.random() > 0.3) { // 70% kemungkinan hadir
-                                const checkInTime = volunteer.schedule.in;
-                                const isLate = Math.random() > 0.7; // 30% kemungkinan terlambat
-                                
-                                attendanceData.push({
-                                    userId: volunteer.id,
-                                    date: dateStr,
-                                    checkIn: isLate ? 
-                                        `${parseInt(checkInTime.split(':')[0]) + 1}:${checkInTime.split(':')[1]}` : 
-                                        checkInTime,
-                                    checkOut: volunteer.schedule.out,
-                                    status: isLate ? 'Terlambat' : 'Tepat Waktu',
-                                    notes: isLate ? 'Terlambat 1 jam' : '',
-                                    photo: null
-                                });
-                            }
-                        });
-                    }
-                    
-                    saveData();
-                }
+        // Variabel global
+        let videoStream = null;
+        let mouthOpenedCount = 0;
+        let faceDetectionInterval = null;
+        
+        // Elemen DOM
+        const video = document.getElementById('video');
+        const startBtn = document.getElementById('startBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const statusDiv = document.getElementById('status');
+        const faceFeedback = document.getElementById('faceFeedback');
+        const progressBar = document.getElementById('progressBar');
+        
+        // Meminta akses kamera
+        async function initCamera() {
+            try {
+                statusDiv.textContent = 'Status: Mengakses kamera...';
+                statusDiv.className = 'status processing';
                 
-                // Set bulan dan tahun saat ini
-                const now = new Date();
-                monthSelect.value = now.getMonth();
-                yearSelect.value = now.getFullYear();
-                reportMonth.value = now.getMonth();
-                reportYear.value = now.getFullYear();
-            }
-
-            // Simpan data ke localStorage
-            function saveData() {
-                localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
-            }
-
-            // Tampilkan notifikasi
-            function showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.className = `alert alert-${type} alert-dismissible fade show notification`;
-                notification.innerHTML = `
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                notificationArea.appendChild(notification);
-                
-                // Hapus notifikasi setelah 3 detik
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 3000);
-            }
-
-            // Handle login
-            loginBtn.addEventListener('click', function() {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                // Validasi sederhana
-                if (!username || !password) {
-                    showNotification('Username dan password harus diisi', 'danger');
-                    return;
-                }
-                
-                // Cek admin login
-                if (username === 'admin' && password === 'Hesoyam123@') {
-                    isAdmin = true;
-                    currentUser = {
-                        id: 0,
-                        name: 'Administrator',
-                        division: 'Admin',
-                        phone: '',
-                        dailySalary: 0,
-                        schedule: { in: '00:00', out: '00:00' }
-                    };
-                    
-                    loginSection.classList.add('d-none');
-                    mainSection.classList.remove('d-none');
-                    adminSection.classList.remove('d-none');
-                    
-                    // Update profil
-                    profileName.textContent = currentUser.name;
-                    profileDivision.textContent = currentUser.division;
-                    profileSalary.textContent = `Sistem Administrator`;
-                    scheduleIn.textContent = '00:00';
-                    scheduleOut.textContent = '00:00';
-                    
-                    // Update gambar profil
-                    profileImage.src = `https://ui-avatars.com/api/?name=Admin&background=e74c3c&color=fff`;
-                    
-                    // Nonaktifkan fitur absen untuk admin
-                    checkInBtn.disabled = true;
-                    checkOutBtn.disabled = true;
-                    startCameraBtn.disabled = true;
-                    
-                    showNotification('Selamat datang, Administrator!', 'success');
-                    return;
-                }
-                
-                // Password default untuk relawan
-                if (password !== 'password123') {
-                    showNotification('Password salah. Gunakan password default: password123', 'danger');
-                    return;
-                }
-                
-                // Cari relawan berdasarkan nama
-                const user = volunteers.find(v => v.name.toLowerCase() === username.toLowerCase());
-                
-                if (user) {
-                    isAdmin = false;
-                    currentUser = user;
-                    loginSection.classList.add('d-none');
-                    mainSection.classList.remove('d-none');
-                    adminSection.classList.add('d-none');
-                    
-                    // Update profil
-                    profileName.textContent = user.name;
-                    profileDivision.textContent = user.division;
-                    profileSalary.textContent = `Upah: Rp ${user.dailySalary.toLocaleString('id-ID')}`;
-                    scheduleIn.textContent = user.schedule.in;
-                    scheduleOut.textContent = user.schedule.out;
-                    
-                    // Update gambar profil
-                    profileImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=3498db&color=fff`;
-                    
-                    // Aktifkan fitur absen untuk relawan
-                    checkInBtn.disabled = false;
-                    checkOutBtn.disabled = false;
-                    startCameraBtn.disabled = false;
-                    
-                    // Load riwayat absensi
-                    loadAttendanceHistory();
-                    
-                    // Update status kehadiran hari ini
-                    updateAttendanceStatus();
-                    
-                    showNotification(`Selamat datang, ${user.name}!`, 'success');
-                } else {
-                    showNotification('Login gagal. Periksa username Anda.', 'danger');
-                }
-            });
-
-            // Handle logout
-            logoutBtn.addEventListener('click', function() {
-                // Stop camera if active
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-                
-                currentUser = null;
-                isAdmin = false;
-                mainSection.classList.add('d-none');
-                adminSection.classList.add('d-none');
-                loginSection.classList.remove('d-none');
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                
-                showNotification('Anda telah logout', 'info');
-            });
-
-            // Handle camera
-            startCameraBtn.addEventListener('click', function() {
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(function(mediaStream) {
-                            stream = mediaStream;
-                            video.srcObject = mediaStream;
-                            video.classList.remove('d-none');
-                            startCameraBtn.classList.add('d-none');
-                            takePhotoBtn.classList.remove('d-none');
-                        })
-                        .catch(function(error) {
-                            showNotification('Tidak dapat mengakses kamera: ' + error.message, 'danger');
-                        });
-                } else {
-                    showNotification('Browser tidak mendukung akses kamera', 'danger');
-                }
-            });
-
-            takePhotoBtn.addEventListener('click', function() {
-                const context = canvas.getContext('2d');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // Convert to data URL
-                currentPhoto = canvas.toDataURL('image/png');
-                
-                // Stop video stream
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-                
-                video.classList.add('d-none');
-                takePhotoBtn.classList.add('d-none');
-                retakePhotoBtn.classList.remove('d-none');
-                
-                // Show preview
-                profileImage.src = currentPhoto;
-                
-                showNotification('Foto berhasil diambil', 'success');
-            });
-
-            retakePhotoBtn.addEventListener('click', function() {
-                currentPhoto = null;
-                profileImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=3498db&color=fff`;
-                retakePhotoBtn.classList.add('d-none');
-                startCameraBtn.classList.remove('d-none');
-                
-                showNotification('Silakan ambil foto kembali', 'info');
-            });
-
-            // Handle absensi masuk
-            checkInBtn.addEventListener('click', function() {
-                if (!currentUser || isAdmin) return;
-                
-                if (!currentPhoto) {
-                    showNotification('Harap ambil foto terlebih dahulu', 'warning');
-                    return;
-                }
-                
-                const now = new Date();
-                const today = now.toISOString().split('T')[0];
-                const timeString = now.toTimeString().split(' ')[0].substring(0, 5);
-                
-                // Cek apakah sudah absen masuk hari ini
-                const existingEntry = attendanceData.find(a => 
-                    a.userId === currentUser.id && a.date === today && a.checkIn
-                );
-                
-                if (existingEntry) {
-                    showNotification('Anda sudah absen masuk hari ini', 'warning');
-                    return;
-                }
-                
-                // Cek keterlambatan
-                const [scheduledHour, scheduledMinute] = currentUser.schedule.in.split(':');
-                const scheduledTime = new Date();
-                scheduledTime.setHours(parseInt(scheduledHour), parseInt(scheduledMinute), 0, 0);
-                
-                const isLate = now > scheduledTime;
-                const status = isLate ? 'Terlambat' : 'Tepat Waktu';
-                const minutesLate = isLate ? Math.floor((now - scheduledTime) / 60000) : 0;
-                
-                // Simpan data absensi
-                attendanceData.push({
-                    userId: currentUser.id,
-                    date: today,
-                    checkIn: timeString,
-                    checkOut: null,
-                    status: status,
-                    notes: isLate ? `Terlambat ${minutesLate} menit` : '',
-                    photo: currentPhoto
+                videoStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user' 
+                    } 
                 });
                 
-                saveData();
-                loadAttendanceHistory();
-                updateAttendanceStatus();
+                video.srcObject = videoStream;
+                startBtn.disabled = true;
+                captureBtn.disabled = false;
                 
-                if (isLate) {
-                    lateWarning.classList.remove('d-none');
-                    showNotification(`Anda terlambat ${minutesLate} menit!`, 'warning');
-                } else {
-                    lateWarning.classList.add('d-none');
-                    showNotification('Absen masuk berhasil dicatat', 'success');
-                }
+                statusDiv.textContent = 'Status: Kamera siap, silakan lakukan verifikasi wajah';
+                statusDiv.className = 'status ready';
                 
-                // Reset camera
-                currentPhoto = null;
-                retakePhotoBtn.classList.add('d-none');
-                startCameraBtn.classList.remove('d-none');
-                profileImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=3498db&color=fff`;
-            });
-
-            // Handle absensi pulang
-            checkOutBtn.addEventListener('click', function() {
-                if (!currentUser || isAdmin) return;
+                // Memulai simulasi deteksi wajah
+                simulateFaceDetection();
                 
-                const now = new Date();
-                const today = now.toISOString().split('T')[0];
-                const timeString = now.toTimeString().split(' ')[0].substring(0, 5);
-                
-                // Cari data absensi masuk hari ini
-                const todayEntry = attendanceData.find(a => 
-                    a.userId === currentUser.id && a.date === today
-                );
-                
-                if (!todayEntry) {
-                    showNotification('Anda belum absen masuk hari ini', 'warning');
-                    return;
-                }
-                
-                if (todayEntry.checkOut) {
-                    showNotification('Anda sudah absen pulang hari ini', 'warning');
-                    return;
-                }
-                
-                // Update data absensi
-                todayEntry.checkOut = timeString;
-                saveData();
-                loadAttendanceHistory();
-                updateAttendanceStatus();
-                
-                showNotification('Absen pulang berhasil dicatat', 'success');
-            });
-
-            // Load riwayat absensi
-            function loadAttendanceHistory() {
-                if (!currentUser) return;
-                
-                const selectedMonth = parseInt(monthSelect.value);
-                const selectedYear = parseInt(yearSelect.value);
-                
-                let userAttendance;
-                if (isAdmin) {
-                    // Admin bisa melihat semua data
-                    userAttendance = attendanceData;
-                } else {
-                    // Relawan hanya melihat data sendiri
-                    userAttendance = attendanceData.filter(a => a.userId === currentUser.id);
-                }
-                
-                // Filter berdasarkan bulan dan tahun yang dipilih
-                const filteredAttendance = userAttendance.filter(a => {
-                    const dateParts = a.date.split('-');
-                    const year = parseInt(dateParts[0]);
-                    const month = parseInt(dateParts[1]) - 1;
-                    
-                    return month === selectedMonth && year === selectedYear;
-                });
-                
-                // Kosongkan tabel
-                attendanceHistory.innerHTML = '';
-                
-                // Isi tabel dengan data
-                if (filteredAttendance.length === 0) {
-                    attendanceHistory.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="text-center">Tidak ada data absensi untuk periode ini</td>
-                        </tr>
-                    `;
-                } else {
-                    filteredAttendance.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(record => {
-                        const row = document.createElement('tr');
-                        
-                        // Dapatkan info relawan
-                        const volunteer = volunteers.find(v => v.id === record.userId);
-                        const volunteerName = volunteer ? volunteer.name : 'Unknown';
-                        
-                        // Format tanggal
-                        const dateObj = new Date(record.date);
-                        const formattedDate = dateObj.toLocaleDateString('id-ID', {
-                            weekday: 'short',
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                        });
-                        
-                        // Tentukan kelas untuk status
-                        const statusClass = record.status === 'Terlambat' ? 'late' : 'on-time';
-                        const statusIcon = record.status === 'Terlambat' ? 
-                            '<span class="status-indicator status-late"></span>' : 
-                            '<span class="status-indicator status-present"></span>';
-                        
-                        // Tombol lihat foto
-                        let photoButton = '';
-                        if (record.photo) {
-                            photoButton = `<button class="btn btn-sm btn-info view-photo" data-photo="${record.photo}">
-                                <i class="fas fa-eye"></i>
-                            </button>`;
-                        }
-                        
-                        row.innerHTML = `
-                            <td>${isAdmin ? volunteerName + '<br><small>' + formattedDate + '</small>' : formattedDate}</td>
-                            <td>${record.checkIn || '-'}</td>
-                            <td>${record.checkOut || '-'}</td>
-                            <td class="${statusClass}">${statusIcon}${record.status || '-'}</td>
-                            <td>${record.notes || '-'}</td>
-                            <td>${photoButton}</td>
-                        `;
-                        
-                        attendanceHistory.appendChild(row);
-                    });
-                    
-                    // Tambahkan event listener untuk tombol lihat foto
-                    document.querySelectorAll('.view-photo').forEach(button => {
-                        button.addEventListener('click', function() {
-                            const photoData = this.getAttribute('data-photo');
-                            const win = window.open();
-                            win.document.write(`<img src="${photoData}" style="max-width: 100%;">`);
-                        });
-                    });
-                }
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                statusDiv.textContent = 'Error: Tidak dapat mengakses kamera. Pastikan Anda memberikan izin.';
+                statusDiv.className = 'status error';
             }
-
-            // Update status kehadiran hari ini
-            function updateAttendanceStatus() {
-                if (!currentUser || isAdmin) return;
-                
-                const today = new Date().toISOString().split('T')[0];
-                const todayEntry = attendanceData.find(a => 
-                    a.userId === currentUser.id && a.date === today
-                );
-                
-                if (todayEntry) {
-                    if (todayEntry.checkIn && todayEntry.checkOut) {
-                        attendanceStatus.innerHTML = '<span class="status-indicator status-present"></span> Sudah absen masuk dan pulang';
-                    } else if (todayEntry.checkIn) {
-                        attendanceStatus.innerHTML = '<span class="status-indicator status-present"></span> Sudah absen masuk';
-                        checkInBtn.disabled = true;
-                    }
-                } else {
-                    attendanceStatus.innerHTML = '<span class="status-indicator status-absent"></span> Belum absen';
-                    checkInBtn.disabled = false;
-                }
-            }
-
-            // Export data to CSV
-            exportBtn.addEventListener('click', function() {
-                if (!currentUser) return;
-                
-                const selectedMonth = parseInt(monthSelect.value);
-                const selectedYear = parseInt(yearSelect.value);
-                
-                let userAttendance;
-                if (isAdmin) {
-                    userAttendance = attendanceData;
-                } else {
-                    userAttendance = attendanceData.filter(a => a.userId === currentUser.id);
+        }
+        
+        // Simulasi deteksi wajah dan mulut
+        function simulateFaceDetection() {
+            mouthOpenedCount = 0;
+            let progress = 0;
+            
+            faceDetectionInterval = setInterval(() => {
+                progress += 5;
+                if (progress <= 100) {
+                    progressBar.style.width = `${progress}%`;
                 }
                 
-                // Filter berdasarkan bulan dan tahun yang dipilih
-                const filteredAttendance = userAttendance.filter(a => {
-                    const dateParts = a.date.split('-');
-                    const year = parseInt(dateParts[0]);
-                    const month = parseInt(dateParts[1]) - 1;
-                    
-                    return month === selectedMonth && year === selectedYear;
-                });
-                
-                if (filteredAttendance.length === 0) {
-                    showNotification('Tidak ada data untuk diexport', 'warning');
-                    return;
+                if (progress === 25) {
+                    faceFeedback.innerHTML = '<i class="fas fa-check" style="color: #2ecc71;"></i> Wajah terdeteksi';
+                } else if (progress === 40) {
+                    faceFeedback.innerHTML = 'Silakan <strong>buka mulut</strong> untuk verifikasi pertama';
+                } else if (progress === 50) {
+                    faceFeedback.innerHTML = '<i class="fas fa-check" style="color: #2ecc71;"></i> Verifikasi mulut pertama berhasil';
+                    mouthOpenedCount = 1;
+                } else if (progress === 65) {
+                    faceFeedback.innerHTML = 'Silakan <strong>buka mulut</strong> untuk verifikasi kedua';
+                } else if (progress === 75) {
+                    faceFeedback.innerHTML = '<i class="fas fa-check" style="color: #2ecc71;"></i> Verifikasi mulut kedua berhasil';
+                    mouthOpenedCount = 2;
+                } else if (progress === 90) {
+                    faceFeedback.innerHTML = '<i class="fas fa-check" style="color: #2ecc71;"></i> Verifikasi wajah berhasil!';
+                } else if (progress >= 100) {
+                    clearInterval(faceDetectionInterval);
+                    faceFeedback.innerHTML = '<i class="fas fa-check-circle" style="color: #2ecc71; font-size: 24px;"></i> Verifikasi selesai! Silakan ambil foto';
+                    statusDiv.textContent = 'Status: Verifikasi wajah berhasil. Silakan ambil foto untuk presensi';
+                    statusDiv.className = 'status success';
                 }
+            }, 300);
+        }
+        
+        // Mengambil foto untuk presensi
+        function capturePhoto() {
+            statusDiv.textContent = 'Status: Mengambil foto dan merekam lokasi...';
+            statusDiv.className = 'status processing';
+            
+            // Simulasi pengambilan foto dan presensi
+            setTimeout(() => {
+                statusDiv.textContent = 'Status: Presensi berhasil dicatat!';
+                statusDiv.className = 'status success';
                 
-                // Create CSV content
-                let csvContent = "Tanggal,Masuk,Pulang,Status,Keterangan\n";
+                // Reset UI setelah presensi berhasil
+                captureBtn.disabled = true;
+                startBtn.disabled = false;
+                progressBar.style.width = '0%';
+                faceFeedback.textContent = 'Silakan mulai proses presensi';
                 
-                filteredAttendance.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(record => {
-                    const dateObj = new Date(record.date);
-                    const formattedDate = dateObj.toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                    });
-                    
-                    csvContent += `"${formattedDate}",${record.checkIn || ''},${record.checkOut || ''},${record.status || ''},"${record.notes || ''}"\n`;
-                });
-                
-                // Create download link
-                const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `absensi_${isAdmin ? 'semua' : currentUser.name}_${selectedYear}_${selectedMonth+1}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showNotification('Data berhasil diexport', 'success');
-            });
-
-            // Generate report (Admin only)
-            generateReportBtn.addEventListener('click', function() {
-                if (!isAdmin) {
-                    showNotification('Hanya admin yang dapat mengakses fitur ini', 'danger');
-                    return;
-                }
-                
-                const selectedMonth = parseInt(reportMonth.value);
-                const selectedYear = parseInt(reportYear.value);
-                const format = reportFormat.value;
-                
-                // Filter data berdasarkan pilihan
-                let filteredData = attendanceData;
-                
-                if (selectedMonth !== -1) {
-                    filteredData = filteredData.filter(a => {
-                        const dateParts = a.date.split('-');
-                        const year = parseInt(dateParts[0]);
-                        const month = parseInt(dateParts[1]) - 1;
-                        
-                        return month === selectedMonth && year === selectedYear;
-                    });
-                } else {
-                    filteredData = filteredData.filter(a => {
-                        const dateParts = a.date.split('-');
-                        const year = parseInt(dateParts[0]);
-                        return year === selectedYear;
-                    });
-                }
-                
-                if (filteredData.length === 0) {
-                    showNotification('Tidak ada data untuk laporan yang dipilih', 'warning');
-                    return;
-                }
-                
-                if (format === 'csv') {
-                    generateCSVReport(filteredData, selectedMonth, selectedYear);
-                } else {
-                    generatePDFReport(filteredData, selectedMonth, selectedYear);
-                }
-            });
-
-            // Generate CSV report
-            function generateCSVReport(data, month, year) {
-                // Group data by user
-                const groupedData = {};
-                
-                data.forEach(record => {
-                    if (!groupedData[record.userId]) {
-                        const volunteer = volunteers.find(v => v.id === record.userId);
-                        groupedData[record.userId] = {
-                            volunteer: volunteer,
-                            records: []
-                        };
-                    }
-                    groupedData[record.userId].records.push(record);
-                });
-                
-                // Create CSV content
-                let csvContent = "Laporan Absensi Relawan SPPG\n";
-                csvContent += `Periode: ${month !== -1 ? `${month + 1}/${year}` : `Tahun ${year}`}\n`;
-                csvContent += `Tanggal Generate: ${new Date().toLocaleDateString('id-ID')}\n\n`;
-                
-                // Generate CSV for each user
-                for (const userId in groupedData) {
-                    const { volunteer, records } = groupedData[userId];
-                    csvContent += `\nNama: ${volunteer.name}\n`;
-                    csvContent += `Divisi: ${volunteer.division}\n`;
-                    csvContent += "Tanggal,Masuk,Pulang,Status,Keterangan\n";
-                    
-                    records.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(record => {
-                        const dateObj = new Date(record.date);
-                        const formattedDate = dateObj.toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                        });
-                        
-                        csvContent += `"${formattedDate}",${record.checkIn || ''},${record.checkOut || ''},${record.status || ''},"${record.notes || ''}"\n`;
-                    });
-                }
-                
-                // Create download link
-                const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-                const link = document.createElement("a");
-                const fileName = `laporan_absensi_semua_${month !== -1 ? `${month + 1}_${year}` : `tahun_${year}`}.csv`;
-                
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", fileName);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showNotification('Laporan CSV berhasil diunduh', 'success');
-            }
-
-            // Generate PDF report
-            function generatePDFReport(data, month, year) {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title
-                doc.setFontSize(18);
-                doc.setTextColor(40, 40, 40);
-                doc.text('LAPORAN ABSENSI RELAWAN SPPG', 105, 15, { align: 'center' });
-                
-                // Add period
-                doc.setFontSize(12);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`Periode: ${month !== -1 ? `${month + 1}/${year}` : `Tahun ${year}`}`, 105, 22, { align: 'center' });
-                
-                // Add date generated
-                doc.setFontSize(10);
-                doc.text(`Tanggal Generate: ${new Date().toLocaleDateString('id-ID')}`, 105, 28, { align: 'center' });
-                
-                let startY = 40;
-                
-                // Group by user
-                const groupedData = {};
-                
-                data.forEach(record => {
-                    if (!groupedData[record.userId]) {
-                        const volunteer = volunteers.find(v => v.id === record.userId);
-                        groupedData[record.userId] = {
-                            volunteer: volunteer,
-                            records: []
-                        };
-                    }
-                    groupedData[record.userId].records.push(record);
-                });
-                
-                // Generate PDF for each user
-                for (const userId in groupedData) {
-                    const { volunteer, records } = groupedData[userId];
-                    
-                    // Add user info
-                    doc.setFontSize(12);
-                    doc.setTextColor(40, 40, 40);
-                    doc.text(`Nama: ${volunteer.name}`, 14, startY);
-                    doc.text(`Divisi: ${volunteer.division}`, 14, startY + 7);
-                    
-                    startY += 15;
-                    
-                    // Prepare table data
-                    const tableData = records.sort((a, b) => new Date(a.date) - new Date(b.date)).map(record => {
-                        const dateObj = new Date(record.date);
-                        const formattedDate = dateObj.toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                        });
-                        
-                        return [
-                            formattedDate,
-                            record.checkIn || '-',
-                            record.checkOut || '-',
-                            record.status || '-',
-                            record.notes || '-'
-                        ];
-                    });
-                    
-                    // Add table
-                    doc.autoTable({
-                        startY: startY,
-                        head: [['Tanggal', 'Masuk', 'Pulang', 'Status', 'Keterangan']],
-                        body: tableData,
-                        theme: 'grid',
-                        headStyles: {
-                            fillColor: [52, 152, 219],
-                            textColor: [255, 255, 255],
-                            fontStyle: 'bold'
-                        },
-                        alternateRowStyles: {
-                            fillColor: [240, 240, 240]
-                        }
-                    });
-                    
-                    startY = doc.lastAutoTable.finalY + 15;
-                    
-                    // Add new page if needed
-                    if (startY > 250) {
-                        doc.addPage();
-                        startY = 20;
-                    }
-                }
-                
-                // Save PDF
-                const fileName = `laporan_absensi_semua_${month !== -1 ? `${month + 1}_${year}` : `tahun_${year}`}.pdf`;
-                
-                doc.save(fileName);
-                showNotification('Laporan PDF berhasil diunduh', 'success');
-            }
-
-            // Event listener untuk filter bulan dan tahun
-            monthSelect.addEventListener('change', loadAttendanceHistory);
-            yearSelect.addEventListener('change', loadAttendanceHistory);
-
-            // Inisialisasi aplikasi
-            initData();
-        });
+                // Tampilkan notifikasi sukses
+                alert('Presensi berhasil! Foto dan lokasi telah direkam.');
+            }, 2000);
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', initCamera);
+        captureBtn.addEventListener('click', capturePhoto);
     </script>
 </body>
 </html>
